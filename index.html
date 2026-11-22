@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sixty-Four Strokes</title>
+  <meta name="description" content="Paste or upload a chess PGN and turn the game into art, in 59 numbered styles." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/art.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo art" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <h1>Sixty-Four Strokes</h1>
+    </div>
+    <div class="gb-summary" id="gbSummary" hidden>
+      <div class="gb-text">
+        <div class="players" id="players"></div>
+        <div class="event" id="eventLine"></div>
+      </div>
+      <button class="btn ghost" id="editGame" aria-expanded="false" aria-controls="gbEditor">Change game</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card game-bar gb-editor" id="gbEditor">
+      <div class="input-head">
+        <h2>Game</h2>
+        <div class="input-actions">
+          <select id="sample" aria-label="Load a famous game">
+            <option value="">Famous games…</option>
+          </select>
+          <label class="btn ghost" for="file">Upload .pgn</label>
+          <input type="file" id="file" accept=".pgn,.txt,application/x-chess-pgn,text/plain" hidden />
+        </div>
+      </div>
+      <div class="drop" id="drop">
+        <textarea id="pgn" spellcheck="false" placeholder="Paste PGN here, or drop a .pgn file…&#10;&#10;1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 …"></textarea>
+        <div class="drop-hint">Drop .pgn file</div>
+      </div>
+      <div class="input-foot">
+        <select id="gamePick" hidden aria-label="Choose game from file"></select>
+        <p class="error" id="error" role="alert"></p>
+        <button class="btn primary" id="loadBtn">Paint ◐</button>
+      </div>
+    </section>
+
+    <!-- The artwork is the page: big canvas, slim panel beside it -->
+    <section class="studio" id="stage" hidden>
+      <div class="art-col">
+        <div class="canvas-frame" id="frame">
+          <canvas id="art" aria-label="Generated artwork"></canvas>
+          <div class="move-tag" id="moveTag"></div>
+        </div>
+        <div class="timeline">
+          <button class="play" id="paintBtn" title="Watch it paint (Space)" aria-label="Watch it paint">▶</button>
+          <div class="tl-body">
+            <input type="range" id="upTo" min="0" max="1" value="1" aria-label="Paint up to move" />
+            <div class="tl-labels"><span>first move</span><span id="upToLabel"></span><span>final position</span></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="style-info">
+          <span class="code-badge" id="curCode">1.1</span>
+          <div class="si-text">
+            <div class="si-name" id="curName">Flow</div>
+            <div class="si-group" id="curGroup">1 · Currents</div>
+          </div>
+          <button class="icon-btn fav-btn" id="curFav" aria-pressed="false" title="Favourite (F)" aria-label="Favourite">☆</button>
+        </div>
+        <div class="nav-row">
+          <button class="btn ghost" id="prevStyle" title="Previous style ([)">‹ Prev</button>
+          <button class="btn ghost" id="nextStyle" title="Next style (])">Next ›</button>
+        </div>
+        <button class="btn browse" id="browseBtn">Browse all <b id="styleCount">59</b> styles ↓</button>
+        <p class="blurb" id="blurb"></p>
+        <div class="panel-sec">
+          <div class="panel-label">Palette</div>
+          <div class="palettes" id="palettes" role="group" aria-label="Palette"></div>
+        </div>
+        <div class="panel-sec">
+          <label class="check"><input type="checkbox" id="poster" /> Poster frame</label>
+          <label class="speed">Speed <input type="range" id="speed" min="1" max="40" value="8" aria-label="Painting speed" /> <b id="speedVal">8</b>/s</label>
+        </div>
+        <div class="panel-sec tb-row">
+          <button class="btn ghost" id="remixBtn" title="Same game, new random variation (R)">Remix <span id="varLabel" class="muted"></span></button>
+          <button class="btn primary" id="pngBtn" title="Vector PDF: print at any size">Download PDF</button>
+        </div>
+        <div class="panel-sec tb-row">
+          <button class="btn ghost" id="videoBtn" title="Record the painting, move by move">Download video</button>
+        </div>
+        <p class="hint" id="videoHint">The video shows the game painting itself at the speed above, then holds on the final picture.</p>
+      </aside>
+    </section>
+
+    <!-- Gallery below the artwork -->
+    <section class="gallery-sec" id="gallerySec">
+      <div class="filters" id="filters">
+        <div class="filters-head">
+          <h2>Styles</h2>
+          <input type="search" id="search" placeholder="Filter: 3   2.4   oil   1.1, 5.3, 9" aria-label="Filter styles by number or name" autocomplete="off" />
+        </div>
+        <div class="chips" id="groupChips" role="group" aria-label="Filter by group"></div>
+        <div class="filter-note" id="filterNote"></div>
+      </div>
+      <div id="gallery"></div>
+      <p class="empty" id="emptyMsg" hidden>No styles match this filter.</p>
+    </section>
+
+    <section class="card how">
+      <h2>How a game becomes a picture</h2>
+      <div class="how-grid">
+        <div>
+          <h3>The canvas is the board</h3>
+          <p>White sits at the bottom and Black at the top, so wherever a style draws, it draws where the game actually happened. Every move travels from its starting square to its landing square.</p>
+        </div>
+        <div>
+          <h3>Colour is who moved</h3>
+          <p>Each side has its own colour family, and every piece type has its own colour within it. Heavier pieces make bigger marks: a queen move carries about nine times the weight of a pawn move. Captures use the captured piece’s colour, and checks use the accent.</p>
+        </div>
+        <div>
+          <h3>Same game, same picture</h3>
+          <p>All the randomness is seeded by the moves themselves, so a game always paints the same picture in a given style. <b>Remix</b> gives you another take on it.</p>
+        </div>
+        <div>
+          <h3>Numbered for filtering</h3>
+          <p>Every style has a fixed code, group number first. Type <b>3</b> for a whole group, <b>2.4</b> for one style, a name like <b>oil</b>, or a list like <b>1.1, 5.3, 9</b>. Star your favourites, and note that downloads (PDF and video) carry the code in their filename.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>Space paints · ← → scrub · [ ] previous/next style · F favourite · R remix · / filter</span>
+    <span>PGN parsing by chess.js (BSD-2)</span>
+  </footer>
+
+  <script src="vendor/chess.js"></script>
+  <script src="js/samples.js"></script>
+  <script src="js/pgn.js"></script>
+  <script src="js/palettes.js"></script>
+  <script src="js/analysis.js"></script>
+  <script src="js/styles/common.js"></script>
+  <script src="js/styles/g01-currents.js"></script>
+  <script src="js/styles/g02-paint.js"></script>
+  <script src="js/styles/g03-modern.js"></script>
+  <script src="js/styles/g04-line.js"></script>
+  <script src="js/styles/g05-textile.js"></script>
+  <script src="js/styles/g06-light.js"></script>
+  <script src="js/styles/g07-nature.js"></script>
+  <script src="js/styles/g08-print.js"></script>
+  <script src="js/styles/g09-data.js"></script>
+  <script src="js/styles/g10-digital.js"></script>
+  <script src="js/painter.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
