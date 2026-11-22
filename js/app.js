@@ -9,11 +9,12 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
   };
 
-  const settings = Object.assign({ style: 'bauhaus', palette: 'lagoon', poster: false, speed: 8, group: 'all', query: '' }, store.get('64strokes:settings', {}));
+  const settings = Object.assign({ style: 'bauhaus', palette: 'lagoon', poster: true, speed: 8, group: 'all', query: '' }, store.get('64strokes:settings', {}));
   if (!STYLES[settings.style] || settings.v !== 2) settings.style = 'bauhaus'; // v2: Bauhaus Tiles became the default
   settings.v = 2;
   if (!PALETTES[settings.palette]) settings.palette = 'lagoon';
-  const favs = new Set(store.get('64strokes:favs', []).filter(id => STYLES[id]));
+  const DEFAULT_FAVS = ['flow', 'brushwork', 'marbling', 'composition', 'bauhaus', 'quilt', 'aurora', 'blueprint', 'radial', 'glitch'];
+  const favs = new Set(store.get('64strokes:favs', DEFAULT_FAVS).filter(id => STYLES[id]));
   const save = () => store.set('64strokes:settings', settings);
   const saveFavs = () => store.set('64strokes:favs', [...favs]);
 
