@@ -1,0 +1,17 @@
+# GitHub Pages config for Sixty-Four Strokes (a static site with no build step).
+title: "Sixty-Four Strokes"
+description: "Paste or upload a PGN and turn the chess game into art in 59 styles."
+
+# This is a user site served from the root domain.
+url: "https://mursalin-braincraft.github.io"
+baseurl: ""
+
+# Leave the static files alone: don't publish repo-only files.
+exclude:
+  - README.md
+  - .gitignore
+  - .DS_Store
+
+# Make sure the vendored library is published as-is.
+include:
+  - vendor
